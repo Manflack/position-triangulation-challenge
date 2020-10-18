@@ -1,0 +1,1 @@
+ ![Architecture](src/main/resources/Architecture.drawio)
