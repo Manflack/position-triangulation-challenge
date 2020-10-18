@@ -35,7 +35,7 @@ import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.MIS
 
 @CrossOrigin(origins = "*", maxAge = 86400)
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping(path = "")
 public class UtilitiesController
 {
 	@Autowired

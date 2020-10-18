@@ -38,8 +38,8 @@ public class Application
 		return new OpenAPI().components(new Components())
 				.info(new Info()
 						.title("MercadoLibre rest Client")
-						.description("MercadoLibre problem")
+						.description("Operacion fuego Quasar")
 						.version("1.0")
-						.license(new License().name("This is a easter egg, please, hire me")));
+						.license(new License().name("This is a easter egg")));
 	}
 }
