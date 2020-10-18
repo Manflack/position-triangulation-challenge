@@ -1,28 +1,45 @@
-package ar.com.manflack.mercadolibre.domain.model;
+package ar.com.manflack.mercadolibre.domain.provider.model;
 
 import java.io.Serializable;
 
-public final class Circle implements Serializable {
+import ar.com.manflack.mercadolibre.domain.exception.UtilityException;
+import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.INVALID_RADII;
+import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.INVALID_RADII_MSG;
 
+public final class Circle implements Serializable
+{
 	private static final long serialVersionUID = 1L;
 
-	public final MyVector c;
-	public final double r;
+	private final MyVector c;
+	private final double r;
 
-	public Circle(MyVector c, double r) {
+	public Circle(MyVector c, double r) throws UtilityException
+	{
 		if (!(r > 0))
-			throw new IllegalArgumentException("Radius must be positive");
+			throw new UtilityException(INVALID_RADII, INVALID_RADII_MSG);
 		this.c = c;
 		this.r = r;
 	}
 
-	public Circle(double x, double y, double r) {
+	public Circle(double x, double y, double r)
+	{
 		this.c = new MyVector(x, y);
 		this.r = r;
 	}
 
+	public MyVector getC()
+	{
+		return c;
+	}
+
+	public double getR()
+	{
+		return r;
+	}
+
 	@Override
-	public int hashCode() {
+	public int hashCode()
+	{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((c == null) ? 0 : c.hashCode());
@@ -33,7 +50,8 @@ public final class Circle implements Serializable {
 	}
 
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(Object obj)
+	{
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -41,10 +59,12 @@ public final class Circle implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Circle other = (Circle) obj;
-		if (c == null) {
+		if (c == null)
+		{
 			if (other.c != null)
 				return false;
-		} else if (!c.equals(other.c))
+		}
+		else if (!c.equals(other.c))
 			return false;
 		if (Double.doubleToLongBits(r) != Double.doubleToLongBits(other.r))
 			return false;
@@ -52,7 +72,8 @@ public final class Circle implements Serializable {
 	}
 
 	@Override
-	public String toString() {
+	public String toString()
+	{
 		return getClass().getSimpleName() + "(c: " + c + ", r: " + r + ")";
 	}
 

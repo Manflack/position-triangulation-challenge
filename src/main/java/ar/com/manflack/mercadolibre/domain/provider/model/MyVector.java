@@ -1,4 +1,4 @@
-package ar.com.manflack.mercadolibre.domain.model;
+package ar.com.manflack.mercadolibre.domain.provider.model;
 
 import static java.lang.Math.*;
 

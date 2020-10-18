@@ -1,12 +1,12 @@
-package ar.com.manflack.mercadolibre.domain.util;
+package ar.com.manflack.mercadolibre.domain.provider;
 
 import static java.lang.Math.*;
 
 import java.util.Arrays;
 import java.util.List;
 
-import ar.com.manflack.mercadolibre.domain.model.Circle;
-import ar.com.manflack.mercadolibre.domain.model.MyVector;
+import ar.com.manflack.mercadolibre.domain.provider.model.Circle;
+import ar.com.manflack.mercadolibre.domain.provider.model.MyVector;
 
 // References:
 // http://paulbourke.net/geometry/2circle/
@@ -84,7 +84,7 @@ public final class CircleCircleIntersection
 		this.c2 = c2;
 
 		// Vector going from c1 center to c2 center:
-		MyVector vectorC1cC2c = c2.c.sub(c1.c);
+		MyVector vectorC1cC2c = c2.getC().sub(c1.getC());
 		// Distance between circle centers:
 		distanceC1cC2c = vectorC1cC2c.mod();
 
@@ -92,7 +92,7 @@ public final class CircleCircleIntersection
 		// here:
 		if (distanceC1cC2c == 0)
 		{
-			if (c1.r == c2.r)
+			if (c1.getR() == c2.getR())
 				type = Type.COINCIDENT;
 			else
 				type = Type.CONCENTRIC_CONTAINED;
@@ -113,10 +113,10 @@ public final class CircleCircleIntersection
 		// Signed distances from circle centers to radical line (the direction
 		// to the
 		// other center is positive):
-		distanceC1cRadicalLine = (sq(distanceC1cC2c) + sq(c1.r) - sq(c2.r)) / (2 * distanceC1cC2c);
+		distanceC1cRadicalLine = (sq(distanceC1cC2c) + sq(c1.getR()) - sq(c2.getR())) / (2 * distanceC1cC2c);
 		distanceC2cRadicalLine = distanceC1cC2c - distanceC1cRadicalLine;
 		// Intersection between line connecting circle centers and radical line:
-		radicalPoint = c1.c.add(versorC1cC2c.scale(distanceC1cRadicalLine));
+		radicalPoint = c1.getC().add(versorC1cC2c.scale(distanceC1cRadicalLine));
 		// Direction versor of radical line (points to the left if looking from
 		// c1
 		// center to c2 center):
@@ -128,7 +128,7 @@ public final class CircleCircleIntersection
 		// Square of distance between radical point and either intersection
 		// point, if
 		// circles are overlapping:
-		double sqH = sq(c1.r) - sq(distanceC1cRadicalLine);
+		double sqH = sq(c1.getR()) - sq(distanceC1cRadicalLine);
 		if (sqH > 0)
 		{
 			type = Type.OVERLAPPING;
@@ -139,7 +139,7 @@ public final class CircleCircleIntersection
 		}
 		else
 		{
-			boolean external = distanceC1cC2c > max(c1.r, c2.r);
+			boolean external = distanceC1cC2c > max(c1.getR(), c2.getR());
 			if (sqH == 0)
 			{
 				type = external ? Type.EXTERNALLY_TANGENT : Type.INTERNALLY_TANGENT;
