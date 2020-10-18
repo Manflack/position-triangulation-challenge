@@ -2,6 +2,9 @@ package ar.com.manflack.mercadolibre.app.rest;
 
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +30,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.MISSING_INFORMATION_TO_COMPUTE;
+import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.MISSING_INFORMATION_TO_COMPUTE_MSG;
 
 @CrossOrigin(origins = "*", maxAge = 86400)
 @RestController
@@ -37,80 +42,48 @@ public class UtilitiesController
 	private UtilitiesService utilitiesService;
 
 	@PostMapping(path = "/topsecret", produces = { MediaType.APPLICATION_JSON_VALUE })
-	@Operation(description = "Compute location.", operationId = "topsecret.computeByBody")
+	@Operation(description = "Compute location. It's required a List of SatelliteApi data object with their fields provided.", operationId = "topsecret.computeFull")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Position computed.", content = @Content(array = @ArraySchema(schema = @Schema(implementation = List.class)))),
-			@ApiResponse(responseCode = "400", description = "Bad request.", content = @Content(schema = @Schema(implementation = ApiError.class))),
+			@ApiResponse(responseCode = "404", description = "Error in data", content = @Content(schema = @Schema(implementation = ApiError.class))),
 			@ApiResponse(responseCode = "500", description = "Internal error.", content = @Content(schema = @Schema(implementation = ApiError.class))) })
-	public ResponseEntity<?> getAll(
-			@Parameter(description = "Fee affected transaction") @RequestBody(required = true) List<SatelliteApi> satellites)
+	public ResponseEntity<?> computeFull(
+			@Parameter(description = "List of satellites data.") @Valid @RequestBody(required = true) List<SatelliteApi> satellites)
 			throws UtilityException
 	{
-		return new ResponseEntity<>(utilitiesService.obtenerCoordenadas(satellites), HttpStatus.OK);
-	}
-	
-	
-/*
-	@Operation(description = "Create new fee.", operationId = "fee.post")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Fee created.", content = @Content(schema = @Schema(implementation = String.class))),
-			@ApiResponse(responseCode = "400", description = "Error in data.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "401", description = "Access Denied.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "403", description = "Error creating fee.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "500", description = "Internal error.", content = @Content(schema = @Schema(implementation = ApiError.class))) })
-	@PostMapping(path = "/", produces = {
-			MediaType.APPLICATION_JSON_VALUE }, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> create(
-			@Parameter(description = "Fee to create.", required = true) @RequestBody FeeApi feeApi) throws Exception
-	{
+		if (satellites.size() != 3)
+			throw new UtilityException(MISSING_INFORMATION_TO_COMPUTE, MISSING_INFORMATION_TO_COMPUTE_MSG);
 
+		return new ResponseEntity<>(utilitiesService.obtainIntersection(satellites), HttpStatus.OK);
 	}
 
-	@Operation(description = "Delete a Fee.", operationId = "fee.delete")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Fee deleted."),
-			@ApiResponse(responseCode = "400", description = "Error in data.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "401", description = "Access Denied.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "403", description = "Error deleting data.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "404", description = "Fee not found.", content = @Content(schema = @Schema(implementation = ApiError.class))),
+	@PostMapping(path = "/topsecret_split/{satellite_name}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(description = "Receive information by part from the Nave. Add the Satellite to Data information for lately be computed after. "
+			+ "Its required provide only three (3) Satellites, otherwhise a exception must be thrown. The data will persist until compute "
+			+ "method doesn't was invoke.", operationId = "topsecret.computeByStep")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Nave received correctly."),
+			@ApiResponse(responseCode = "200", description = "Data received.", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ar.com.manflack.mercadolibre.app.api.ApiResponse.class)))),
+			@ApiResponse(responseCode = "404", description = "Error in data.", content = @Content(schema = @Schema(implementation = ApiError.class))),
 			@ApiResponse(responseCode = "500", description = "Internal error.", content = @Content(schema = @Schema(implementation = ApiError.class))) })
-	@DeleteMapping(path = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> delete(
-			@Parameter(description = "Fee id to delete.", required = true) @PathVariable("id") final Long id)
+	public ResponseEntity<?> computeByStep(
+			@Parameter(description = "Satellite name.", required = true) @PathVariable("satellite_name") final String satelliteName,
+			@Parameter(description = "Satellite data.", required = true) @RequestBody(required = true) SatelliteApi satelliteApi)
 			throws Exception
 	{
-
+		satelliteApi.setName(satelliteName);
+		utilitiesService.setSatellite(satelliteApi);
+		return new ResponseEntity<>(new ar.com.manflack.mercadolibre.app.api.ApiResponse("Nave received correctly"),
+				HttpStatus.OK);
 	}
 
-	@Operation(description = "Update a Fee", operationId = "fee.put")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Fee updated.", content = @Content(schema = @Schema(implementation = String.class))),
-			@ApiResponse(responseCode = "400", description = "Error in data.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "401", description = "Access Denied.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "403", description = "Error updating data.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "404", description = "Fee not found.", content = @Content(schema = @Schema(implementation = ApiError.class))),
+	@GetMapping(path = "/topsecret_split/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(description = "Compute the Nave information by Satellites data provided before.", operationId = "topsecret.computePutByPart")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Distance computed."),
+			@ApiResponse(responseCode = "200", description = "Data received.", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ar.com.manflack.mercadolibre.app.api.ApiResponse.class)))),
+			@ApiResponse(responseCode = "404", description = "Error in data.", content = @Content(schema = @Schema(implementation = ApiError.class))),
 			@ApiResponse(responseCode = "500", description = "Internal error.", content = @Content(schema = @Schema(implementation = ApiError.class))) })
-	@PutMapping(path = "/{id}", produces = {
-			MediaType.APPLICATION_JSON_VALUE }, consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> update(
-			@Parameter(description = "Fee id to update.", required = true) @PathVariable("id") final Long id,
-			@Parameter(description = "Fee data.", required = true) @RequestBody FeeApi feeApi) throws Exception
+	public ResponseEntity<?> getComputeByStep() throws Exception
 	{
-
+		return new ResponseEntity<>(utilitiesService.obtainIntersectionByStep(), HttpStatus.OK);
 	}
-
-	@Operation(description = "Gets a Fee by Id.", operationId = "fee.getById")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Fee info.", content = @Content(schema = @Schema(implementation = String.class))),
-			@ApiResponse(responseCode = "400", description = "Error in data.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "401", description = "Access Denied.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "403", description = "Error deleting data.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "404", description = "Fee not found.", content = @Content(schema = @Schema(implementation = ApiError.class))),
-			@ApiResponse(responseCode = "500", description = "Internal error.", content = @Content(schema = @Schema(implementation = ApiError.class))) })
-	@GetMapping(path = "/byId/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> get(
-			@Parameter(description = "Fee id to get.", required = true) @PathVariable("id") final Long id)
-			throws Exception
-	{
-
-	}*/
 }

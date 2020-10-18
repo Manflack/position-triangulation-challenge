@@ -1,10 +1,15 @@
 package ar.com.manflack.mercadolibre.app.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonRootName;
 
 import ar.com.manflack.mercadolibre.domain.provider.model.MyVector;
+import io.swagger.v3.oas.annotations.media.Schema;
 
-public class MyVectorApi {
+@JsonRootName(value = "MyVectorApi")
+@Schema(description = "Mathematical Vector.")
+public class MyVectorApi
+{
 	@JsonProperty
 	private double x;
 
@@ -16,20 +21,24 @@ public class MyVectorApi {
 		this.x = myVector.getX();
 		this.y = myVector.getY();
 	}
-	
-	public double getX() {
+
+	public double getX()
+	{
 		return x;
 	}
 
-	public void setX(double x) {
+	public void setX(double x)
+	{
 		this.x = x;
 	}
 
-	public double getY() {
+	public double getY()
+	{
 		return y;
 	}
 
-	public void setY(double y) {
+	public void setY(double y)
+	{
 		this.y = y;
 	}
 

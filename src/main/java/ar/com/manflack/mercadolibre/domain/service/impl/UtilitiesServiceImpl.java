@@ -1,8 +1,14 @@
 package ar.com.manflack.mercadolibre.domain.service.impl;
 
+import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.MISSING_INFORMATION_TO_COMPUTE;
+import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.MISSING_INFORMATION_TO_COMPUTE_MSG;
 import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.NO_INTERSECTION;
 import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.NO_INTERSECTION_MSG;
+import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.OVERINFORMATION_TO_COMPUTE;
+import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.OVERINFORMATION_TO_COMPUTE_MSG;
 
+import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import org.apache.commons.logging.Log;
@@ -21,37 +27,66 @@ import ar.com.manflack.mercadolibre.domain.service.UtilitiesService;
 @Service
 public class UtilitiesServiceImpl implements UtilitiesService
 {
+	private static final String KENOBI_NAME = "KENOBI";
+	private static final String SKYWALKER_NAME = "SKYWALKER";
+	private static final String SATO_NAME = "SATO";
+
 	private final Log logger = LogFactory.getLog(getClass());
 
 	private static final double EPSILON = 0.00001;
 
-	private Circle kenobi = new Circle(-400, 0, 300);
-	private Circle skywalker = new Circle(100, 0, 200);
-	private Circle sato = new Circle(-100, -50, 50);
+	private static final double kenobiX = -400;
+	private static final double kenobiY = 0;
+
+	private static final double skywalkerX = 100;
+	private static final double skywalkerY = 0;
+
+	private static final double satoX = -100;
+	private static final double satoY = -50;
+
+	private List<SatelliteApi> localSatellitesInformation = new ArrayList<>();
 
 	@Override
-	public ApiResponse obtenerCoordenadas(List<SatelliteApi> satellites) throws UtilityException
+	public ApiResponse obtainIntersection(List<SatelliteApi> satellites) throws UtilityException
 	{
 		ApiResponse apiResponse = new ApiResponse();
-		apiResponse.setMessage("");
-		apiResponse.setPosition(null);
+
+		/*
+		 * Make a relationship as SATELLITE_NAME -> DISTANCE
+		 */
+		Hashtable<String, Double> relationNames = new Hashtable<>();
+		satellites.forEach(satellite -> {
+			relationNames.put(satellite.getName().toUpperCase(), satellite.getDistance());
+		});
+
+		/*
+		 * Instantiate the Circles with the data provided
+		 */
+		Circle kenobi = new Circle(kenobiX, kenobiY, relationNames.get(KENOBI_NAME));
+		Circle skywalker = new Circle(skywalkerX, skywalkerY, relationNames.get(SKYWALKER_NAME));
+		Circle sato = new Circle(satoX, satoY, relationNames.get(SATO_NAME));
 
 		CircleCircleIntersection m = new CircleCircleIntersection(kenobi, skywalker);
 
+		/*
+		 * Obtain a List of intersections which can result in NULL,
+		 * OneIntersection or Two Intersection
+		 */
 		List<MyVector> intersections = m.getIntersectionPoints();
 
 		if (null == intersections)
 		{
+			// No exist intersection
 			throw new UtilityException(NO_INTERSECTION, NO_INTERSECTION_MSG);
 		}
 		else if (null != intersections.get(0))
 		{
-			// Solo hay una interseccion
+			// One intersection
 			MyVector intersectionAB = intersections.get(0);
 
-			// si la distancia al punto C es aproximadamente igual, entonces hay
-			// intersección de A B y C
-			if (!validateToRadiiC(intersectionAB))
+			// if the distance between obtained point and C, are "equals", then
+			// be have intersection between A, B and C
+			if (!validateToRadiiC(intersectionAB, sato))
 			{
 				throw new UtilityException(NO_INTERSECTION, NO_INTERSECTION_MSG);
 			}
@@ -60,31 +95,63 @@ public class UtilitiesServiceImpl implements UtilitiesService
 		}
 		else if (null != intersections.get(1) && null != intersections.get(2))
 		{
-			// hay 2 intersecciones, debe coincidir un punto con la distancia C
+			// in this case we have two intersections, almost one must be
+			// coincide with Nave and C distance
 			MyVector intersectionAB1 = intersections.get(1);
 			MyVector intersectionAB2 = intersections.get(2);
 
-			if (validateToRadiiC(intersectionAB1))
+			if (validateToRadiiC(intersectionAB1, sato))
 			{
 				apiResponse.setPosition(new MyVectorApi(intersectionAB1));
 			}
-			else if (validateToRadiiC(intersectionAB2))
+			else if (validateToRadiiC(intersectionAB2, sato))
 			{
 				apiResponse.setPosition(new MyVectorApi(intersectionAB2));
 			}
-			else
-				throw new UtilityException(NO_INTERSECTION, NO_INTERSECTION_MSG);
+			return apiResponse;
 		}
-
-		return apiResponse;
+		throw new UtilityException(NO_INTERSECTION, NO_INTERSECTION_MSG);
 	}
 
-	private boolean validateToRadiiC(MyVector intersectionAB)
+	@Override
+	public void setSatellite(SatelliteApi satelliteApi) throws UtilityException
+	{
+		if (localSatellitesInformation.size() == 3)
+		{
+			throw new UtilityException(OVERINFORMATION_TO_COMPUTE, OVERINFORMATION_TO_COMPUTE_MSG);
+		}
+		localSatellitesInformation.add(satelliteApi);
+	}
+
+	@Override
+	public ApiResponse obtainIntersectionByStep() throws UtilityException
+	{
+		if (localSatellitesInformation.size() < 3)
+		{
+			/*
+			 * If the user try to compute the Nave position's, and don't
+			 * provided enough information, don't clean the data provided
+			 * before.
+			 */
+			throw new UtilityException(MISSING_INFORMATION_TO_COMPUTE, MISSING_INFORMATION_TO_COMPUTE_MSG);
+		}
+
+		/*
+		 * No matters what, always restart the data
+		 */
+		List<SatelliteApi> satelites = localSatellitesInformation;
+		localSatellitesInformation = new ArrayList<>();
+		return obtainIntersection(satelites);
+	}
+
+	private boolean validateToRadiiC(MyVector intersectionAB, Circle sato)
 	{
 		MyVector vectorC1cC2c = intersectionAB.sub(sato.getC());
-		// Distance between circle centers:
+		/*
+		 * Log distance between circle centers:
+		 */
 		double distanceC1cC2c = vectorC1cC2c.mod();
-		logger.info(distanceC1cC2c);
+		logger.info(vectorC1cC2c.toString() + " ->: " + distanceC1cC2c);
 
 		return Math.abs(distanceC1cC2c - sato.getR()) > EPSILON ? false : true;
 	}

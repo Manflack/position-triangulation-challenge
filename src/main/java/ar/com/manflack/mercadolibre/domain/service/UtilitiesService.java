@@ -8,5 +8,9 @@ import ar.com.manflack.mercadolibre.domain.exception.UtilityException;
 
 public interface UtilitiesService
 {
-	ApiResponse obtenerCoordenadas(List<SatelliteApi> satellites) throws UtilityException;
+	ApiResponse obtainIntersection(List<SatelliteApi> satellites) throws UtilityException;
+
+	ApiResponse obtainIntersectionByStep() throws UtilityException;
+
+	void setSatellite(SatelliteApi satelliteApi) throws UtilityException;
 }

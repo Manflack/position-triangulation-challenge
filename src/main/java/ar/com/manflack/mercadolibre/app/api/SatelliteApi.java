@@ -10,22 +10,22 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@JsonRootName(value = "satellite")
+@JsonRootName(value = "Satellite")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(Include.NON_EMPTY)
-@Schema(description = "Address information.")
+@Schema(description = "Satellite information.")
 public class SatelliteApi
 {
 	@JsonProperty
-	@Schema(description = "Name of Satellite")
+	@Schema(description = "Name of Satellite", required = true)
 	private String name;
 
 	@JsonProperty
-	@Schema(description = "Distance between Nave and Satellite")
+	@Schema(description = "Distance between Nave and Satellite", required = true)
 	private double distance;
 
 	@JsonProperty
-	@Schema(description = "Message received from Nave")
+	@Schema(description = "Message received from Nave", required = true)
 	private List<String> message;
 
 	public String getName()
