@@ -1,1 +1,1 @@
- ![Architecture](src/main/resources/Architecture.drawio)
+ ![Architecture](src/main/resources/Architecture.svg)
