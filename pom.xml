@@ -15,9 +15,6 @@
 	<name>mercadolibre</name>
 	<description>Operacion fuego de quasar API</description>
 
-
-
-
 	<properties>
 		<java.version>8</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

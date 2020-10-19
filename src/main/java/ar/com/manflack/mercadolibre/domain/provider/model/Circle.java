@@ -21,8 +21,10 @@ public final class Circle implements Serializable
 		this.r = r;
 	}
 
-	public Circle(double x, double y, double r)
+	public Circle(double x, double y, double r) throws UtilityException
 	{
+		if (!(r > 0))
+			throw new UtilityException(INVALID_RADII, INVALID_RADII_MSG);
 		this.c = new MyVector(x, y);
 		this.r = r;
 	}

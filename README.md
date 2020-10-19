@@ -1,4 +1,26 @@
-To access to Swagger OpenApi documentation check `http://localhost:8080/swagger-ui.html`
+To run application: **mvn spring-boot:run -Djava.awt.headless=false**
+
+By default it's run in **localhost:8080** with **local** profile
+
+Configuration
+---------
+|Property|Description|Default|
+|-|-|-|
+|config.timezone|Module TimeZone|`'GMT'`|
+
+Endpoints
+---------
+The swagger's definition is in `/swagger-ui.html`, for example: `http://localhost:8080/swagger-ui.html`
+
+All services response errors with this structure:
+```json
+{
+    "timestamp": 1512747081830,
+    "status": "[HTTP STATUS CODE]",
+    "code": "[ERROR CODE]",
+    "message": "[ERROR MESSAGE]"
+}
+```
 
 # Architecture of the project
 

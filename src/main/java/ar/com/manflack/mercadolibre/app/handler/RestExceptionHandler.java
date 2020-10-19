@@ -29,7 +29,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler
 	@ExceptionHandler(UtilityException.class)
 	protected ResponseEntity<Object> handleExampleError(UtilityException ex)
 	{
-		return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST, ex.getErrorCode(), ex.getMessage(), ex));
+		return buildResponseEntity(new ApiError(HttpStatus.NOT_FOUND, ex.getErrorCode(), ex.getMessage(), ex));
 	}
 
 	@ExceptionHandler(Exception.class)

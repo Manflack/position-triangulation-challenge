@@ -27,7 +27,7 @@ public class LoggerDomain
 {
     private final Log log = LogFactory.getLog(this.getClass());
 
-	@Around("execution(* ar.com.plug..*domain.service.impl..*(..))")
+	@Around("execution(* ar.com.manflack..*domain.service.impl..*(..))")
 	public Object logTimeMethod(ProceedingJoinPoint joinPoint) throws Throwable
 	{
 		GenericException ex = null;

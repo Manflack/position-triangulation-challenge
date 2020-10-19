@@ -1,6 +1,7 @@
 package ar.com.manflack.mercadolibre.domain.provider;
 
-import static java.lang.Math.*;
+import static java.lang.Math.max;
+import static java.lang.Math.sqrt;
 
 import java.util.Arrays;
 import java.util.List;
