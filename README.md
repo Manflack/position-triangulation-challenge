@@ -1,12 +1,10 @@
-To run application: **mvn spring-boot:run -Djava.awt.headless=false**
+To run application: **mvn spring-boot:run**
 
 By default it's run in **localhost:8080** with **local** profile
 
 Configuration
 ---------
-|Property|Description|Default|
-|-|-|-|
-|config.timezone|Module TimeZone|`'GMT'`|
+No properties defined
 
 Endpoints
 ---------
@@ -30,7 +28,8 @@ All services response errors with this structure:
 - Logger layer
 - Controller layer
 - Service layer
-
+- Guava Cache
+	- After 1 minute all entries received in path /topsecret_split will be deleted.
 ---
 
 # Technical Details about the implementation logic

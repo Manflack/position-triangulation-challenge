@@ -58,4 +58,10 @@ public class SatelliteApi
 		this.message = message;
 	}
 
+	@Override
+	public String toString()
+	{
+		return "SatelliteApi [name=" + name + ", distance=" + distance + ", message=" + message + "]";
+	}
+
 }

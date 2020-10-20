@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
+import ar.com.manflack.mercadolibre.domain.model.Point;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonRootName(value = "ApiResponse")
@@ -15,7 +16,7 @@ public class ApiResponse
 	private String message;
 
 	@JsonProperty
-	private MyVectorApi position;
+	private Point position;
 
 	public ApiResponse(String message)
 	{
@@ -37,14 +38,20 @@ public class ApiResponse
 		this.message = message;
 	}
 
-	public MyVectorApi getPosition()
+	public Point getPosition()
 	{
 		return position;
 	}
 
-	public void setPosition(MyVectorApi position)
+	public void setPosition(Point position)
 	{
 		this.position = position;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "ApiResponse [message=" + message + ", position=" + position + "]";
 	}
 
 }

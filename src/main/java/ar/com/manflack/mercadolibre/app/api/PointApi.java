@@ -3,12 +3,12 @@ package ar.com.manflack.mercadolibre.app.api;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
 
-import ar.com.manflack.mercadolibre.domain.provider.model.MyVector;
+import ar.com.manflack.mercadolibre.domain.model.Point;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@JsonRootName(value = "MyVectorApi")
-@Schema(description = "Mathematical Vector.")
-public class MyVectorApi
+@JsonRootName(value = "PointApi")
+@Schema(description = "Point in cartesian plane.")
+public class PointApi
 {
 	@JsonProperty
 	private double x;
@@ -16,10 +16,10 @@ public class MyVectorApi
 	@JsonProperty
 	private double y;
 
-	public MyVectorApi(MyVector myVector)
+	public PointApi(Point point)
 	{
-		this.x = myVector.getX();
-		this.y = myVector.getY();
+		this.x = point.getX();
+		this.y = point.getY();
 	}
 
 	public double getX()
@@ -40,6 +40,12 @@ public class MyVectorApi
 	public void setY(double y)
 	{
 		this.y = y;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "PointApi [x=" + x + ", y=" + y + "]";
 	}
 
 }

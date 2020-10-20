@@ -4,6 +4,7 @@ import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.MIS
 import static ar.com.manflack.mercadolibre.domain.exception.UtilityException.MISSING_INFORMATION_TO_COMPUTE_MSG;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import javax.validation.Valid;
 
@@ -47,12 +48,12 @@ public class UtilitiesController
 			@ApiResponse(responseCode = "500", description = "Internal error.", content = @Content(schema = @Schema(implementation = ApiError.class))) })
 	public ResponseEntity<?> computeFull(
 			@Parameter(description = "List of satellites data.") @Valid @RequestBody(required = true) List<SatelliteApi> satellites)
-			throws UtilityException
+			throws UtilityException, ExecutionException
 	{
 		if (satellites.size() != 3)
 			throw new UtilityException(MISSING_INFORMATION_TO_COMPUTE, MISSING_INFORMATION_TO_COMPUTE_MSG);
 
-		return new ResponseEntity<>(utilitiesService.obtainIntersection(satellites), HttpStatus.OK);
+		return new ResponseEntity<>(utilitiesService.getLocation(satellites), HttpStatus.OK);
 	}
 
 	@PostMapping(path = "/topsecret_split/{satellite_name}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -64,9 +65,10 @@ public class UtilitiesController
 			@ApiResponse(responseCode = "404", description = "Error in data.", content = @Content(schema = @Schema(implementation = ApiError.class))),
 			@ApiResponse(responseCode = "500", description = "Internal error.", content = @Content(schema = @Schema(implementation = ApiError.class))) })
 	public ResponseEntity<?> computeByStep(
-			@Parameter(description = "Satellite name.", required = true) @PathVariable("satellite_name") final String satelliteName,
+			@Parameter(description = "Satellite name.", required = true, example = "Kenobi") @PathVariable("satellite_name") final String satelliteName,
 			@Parameter(description = "Satellite data.", required = true) @RequestBody(required = true) SatelliteApi satelliteApi)
-			throws Exception
+			throws UtilityException
+
 	{
 		satelliteApi.setName(satelliteName);
 		utilitiesService.setSatellite(satelliteApi);
@@ -80,7 +82,7 @@ public class UtilitiesController
 			@ApiResponse(responseCode = "200", description = "Data received.", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ar.com.manflack.mercadolibre.app.api.ApiResponse.class)))),
 			@ApiResponse(responseCode = "404", description = "Error in data.", content = @Content(schema = @Schema(implementation = ApiError.class))),
 			@ApiResponse(responseCode = "500", description = "Internal error.", content = @Content(schema = @Schema(implementation = ApiError.class))) })
-	public ResponseEntity<?> getComputeByStep() throws Exception
+	public ResponseEntity<?> getComputeByStep() throws UtilityException, ExecutionException
 	{
 		return new ResponseEntity<>(utilitiesService.obtainIntersectionByStep(), HttpStatus.OK);
 	}
