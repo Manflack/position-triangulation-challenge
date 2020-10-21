@@ -18,6 +18,10 @@ public class Point
 		this.y = circle.getY();
 	}
 
+	public Point()
+	{
+	}
+
 	public Point sub(Point p2)
 	{
 		return new Point(x - p2.x, y - p2.y);

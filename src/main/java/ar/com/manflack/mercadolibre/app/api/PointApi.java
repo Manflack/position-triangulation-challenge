@@ -22,6 +22,17 @@ public class PointApi
 		this.y = point.getY();
 	}
 
+	public PointApi(double x, double y)
+	{
+		this.x = x;
+		this.y = y;
+	}
+
+	public PointApi()
+	{
+
+	}
+
 	public double getX()
 	{
 		return x;

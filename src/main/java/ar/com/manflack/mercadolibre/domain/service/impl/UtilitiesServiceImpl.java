@@ -130,6 +130,7 @@ public class UtilitiesServiceImpl implements UtilitiesService
 		arrayMessages.add(satellites.get(1).getMessage());
 		arrayMessages.add(satellites.get(2).getMessage());
 		apiResponse.setMessage(getMessage(arrayMessages));
+
 		return apiResponse;
 	}
 

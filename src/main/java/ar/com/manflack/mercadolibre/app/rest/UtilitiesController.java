@@ -76,7 +76,7 @@ public class UtilitiesController
 				HttpStatus.OK);
 	}
 
-	@GetMapping(path = "/topsecret_split/", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/topsecret_split", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(description = "Compute the Nave information by Satellites data provided before.", operationId = "topsecret.computePutByPart")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Distance computed."),
 			@ApiResponse(responseCode = "200", description = "Data received.", content = @Content(array = @ArraySchema(schema = @Schema(implementation = ar.com.manflack.mercadolibre.app.api.ApiResponse.class)))),

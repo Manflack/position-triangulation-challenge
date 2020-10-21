@@ -23,6 +23,12 @@ public class ApiResponse
 		this.message = message;
 	}
 
+	public ApiResponse(String message, Point position)
+	{
+		this.message = message;
+		this.position = position;
+	}
+
 	public ApiResponse()
 	{
 

@@ -28,6 +28,17 @@ public class SatelliteApi
 	@Schema(description = "Message received from Nave", required = true)
 	private List<String> message;
 
+	public SatelliteApi(String name, double distance, List<String> message)
+	{
+		this.name = name;
+		this.distance = distance;
+		this.message = message;
+	}
+
+	public SatelliteApi()
+	{
+	}
+
 	public String getName()
 	{
 		return name;
