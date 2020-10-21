@@ -104,7 +104,8 @@ public class UtilitiesServiceImpl implements UtilitiesService
 			{
 				apiResponse.setPosition(intersectionAB);
 			}
-			throw new UtilityException(NO_INTERSECTION, NO_INTERSECTION_MSG);
+			else
+				throw new UtilityException(NO_INTERSECTION, NO_INTERSECTION_MSG);
 		}
 		else
 		{
