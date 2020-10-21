@@ -113,6 +113,7 @@ If we know **d1**, now i can compute **h; h^2 = r1^2 - d1^2**
 Using lineal functions, we got that:
 
 **x3 = x2 +- h ( y1 - y0 ) / d**
+and
 **y3 = y2 -+ h ( x1 - x0 ) / d**
 
 References:
