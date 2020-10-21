@@ -39,6 +39,37 @@ All services response errors with this structure:
 	- Controller tests
 ---
 
+# Log
+Example about logs in the project.
+
+```
+2020-10-21 17:07:53.608  INFO 341980 --- [nio-8080-exec-3] a.c.m.m.d.s.impl.UtilitiesServiceImpl    : Point [x=-207.58081840123094, y=-267.0150895926144] ->: 797.1014305331729
+2020-10-21 17:07:53.609  INFO 341980 --- [nio-8080-exec-3] a.c.m.m.d.s.impl.UtilitiesServiceImpl    : Point [x=-245.12188430147177, y=-41.76869419116939] ->: 758.4886189770056
+2020-10-21 17:07:53.613  INFO 341980 --- [nio-8080-exec-3] a.c.m.m.domain.util.log.LoggerDomain     : {
+  "className" : "UtilitiesServiceImpl",
+  "method" : "getLocation",
+  "parameters" : [ "[SatelliteApi [name=kenobi, distance=300.0, message=[, este, , , mensaje]], SatelliteApi [name=skywalker, distance=350.0, message=[este, , un, , ]], SatelliteApi [name=sato, distance=758.4886189770056, message=[este, es, , , secreto]]]" ],
+  "duration" : 23
+}
+2020-10-21 17:07:53.617  INFO 341980 --- [nio-8080-exec-3] a.c.m.m.domain.util.log.LoggerApi        : {
+  "className" : "UtilitiesController",
+  "method" : "computeFull",
+  "parameters" : [ "[SatelliteApi [name=kenobi, distance=300.0, message=[, este, , , mensaje]], SatelliteApi [name=skywalker, distance=350.0, message=[este, , un, , ]], SatelliteApi [name=sato, distance=758.4886189770056, message=[este, es, , , secreto]]]" ],
+  "duration" : 28
+}
+2020-10-21 17:07:53.629  INFO 341980 --- [nio-8080-exec-3] a.c.m.m.d.util.filter.LoggingFilter      : {
+  "method" : "POST",
+  "path" : "/topsecret",
+  "status" : 200,
+  "inDate" : 1603300073561,
+  "outDate" : 1603300073622,
+  "headers" : "[content-type:application/json][user-agent:PostmanRuntime/7.26.5][accept:*/*][postman-token:a297f311-6efe-4529-960b-ab579cc2ca7d][host:manflack.com.ar:8080][accept-encoding:gzip, deflate, br][connection:keep-alive][content-length:381]",
+  "request" : "[{\"distance\":\"300\",\"name\":\"kenobi\",\"message\":[\"\",\"este\",\"\",\"\",\"mensaje\"]},{\"distance\":\"350\",\"name\":\"skywalker\",\"message\":[\"este\",\"\",\"un\",\"\",\"\"]},{\"distance\":\"758.4886189770056\",\"name\":\"sato\",\"message\":[\"este\",\"es\",\"\",\"\",\"secreto\"]}]",
+  "response" : "{\"position\":{\"x\":-245.12188430147177,\"y\":-41.76869419116939},\"message\":\"este es un mensaje\"}",
+  "remoteAddress" : "IP_ADDRESS"
+}
+```
+
 # Technical overview details about the implementation logic
 
 Given two circles and his radius (provided by API, understanding a circle as an Satellite with Radius Zn),
